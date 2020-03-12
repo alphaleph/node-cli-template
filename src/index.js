@@ -1,29 +1,7 @@
 import 'dotenv/config';
-import readline from 'readline';
+import inquirer from 'inquirer';
 
 console.log(process.env.MY_SECRET);
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-function ask() {
-  rl.question('What is your chosen number? (Type "end" to quit) ', choice => {
-    if (choice === 'end') {
-      rl.close();
-    } else {
-      const chosenNum = parseInt(choice, 10);
-      if (chosenNum && chosenNum >= 3 && chosenNum <= 5) {
-        console.log(`Your chosen number is: ${chosenNum}`);
-        ask();
-      } else {
-        console.log('Please enter a valid number between 3 and 5.');
-        ask();
-      }
-    }
-  });
-}
 
 const a = 'a';
 
@@ -36,4 +14,31 @@ const obj = {
 };
 
 console.log(obj);
+
+function ask() {
+  inquirer
+    .prompt([
+      {
+        type: 'number',
+        name: 'numChoice',
+        message: 'What is your chosen number?',
+      },
+    ])
+    .then(ans => {
+      if (Number.isNaN(ans.numChoice)) {
+        console.log('Please enter a number.');
+        ask();
+      } else {
+        console.log(`Your number is: ${ans.numChoice}`);
+      }
+    })
+    .catch(err => {
+      if (err.isTtyError) {
+        console.log('TtyError: Check environment, e.g. process.stdout.isTTY');
+      } else {
+        console.log('Other error');
+      }
+    });
+}
+
 ask();
